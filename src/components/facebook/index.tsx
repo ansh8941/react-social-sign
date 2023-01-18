@@ -16,7 +16,7 @@ type FBProps = {
   handleResponse: (data: FBResponse | FBStatus) => void;
   onFailure: (data: FBStatus) => void;
   fbAppId: string;
-  render?: React.ReactNode;
+  render?: any;
 };
 
 const FacebookLogin: FC<FBProps> = ({ handleResponse, fbAppId, onFailure, render }): ReactElement => {
@@ -50,7 +50,7 @@ const FacebookLogin: FC<FBProps> = ({ handleResponse, fbAppId, onFailure, render
   useEffect(() => {
     if (scriptLoaded)
       window.FB.getLoginStatus((response: { authResponse: any; status: string }) => {
-        console.log('File:index.tsx', 'Line: 51', response);
+        console.log(response);
       });
   }, [scriptLoaded]);
 
@@ -83,13 +83,17 @@ const FacebookLogin: FC<FBProps> = ({ handleResponse, fbAppId, onFailure, render
     });
   }
 
-  return (
-    <>
-      <button className={`${styles.loginBtn} ${styles.loginBtnFacebook}`} onClick={handleOnClick}>
-        {render ? render : <span>Sign in With Facebook</span>}
-      </button>
-    </>
-  );
+  if (render) {
+    return render({ onClick: handleOnClick });
+  } else {
+    return (
+      <>
+        <button className={`${styles.loginBtn} ${styles.loginBtnFacebook}`} onClick={handleOnClick}>
+          <span>Sign in With Facebook</span>
+        </button>
+      </>
+    );
+  }
 };
 
 export default FacebookLogin;

@@ -5,27 +5,22 @@
 ## Install
 
 ```
-npm install social-sign
+npm install react-social-sign
 ```
 
-## How to use
+## How to use GoogleLogin
 
 ```js
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { GoogleLogin } from 'social-sign';
+import { GoogleLogin } from 'react-social-sign';
 
 function App() {
-  const responseGoogle = (response) => {
+  const handleResponse = (response) => {
     console.log(response);
   };
 
-  return (
-    <GoogleLogin
-      clientId='658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com'
-      handleResponse={responseGoogle}
-    />
-  );
+  return <GoogleLogin clientId={'CLIENT_ID'} handleResponse={handleResponse} />;
 }
 
 export default App;
@@ -56,3 +51,61 @@ You can also access the returned values via the following properties on the retu
 |    picture     | string  |                 Profile image                  |
 |   given_name   | string  |                User First Name                 |
 |  family_name   | string  |                 User Last Name                 |
+
+## How to use FacebookLogin
+
+```js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { FacebookLogin } from 'react-social-sign';
+
+function App() {
+  const handleResponse = (res) => {
+    console.log(res);
+  };
+  const onFailure = (res) => {
+    console.log(res);
+  };
+
+  return <FacebookLogin fbAppId={'APP_ID'} onFailure={onFailure} handleResponse={handleResponse} />;
+}
+
+export default App;
+```
+
+## FacebookLogin button without styling
+
+```js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { FacebookLogin } from 'react-social-sign';
+
+function App() {
+  const handleResponse = (res) => {
+    console.log(res);
+  };
+  const onFailure = (res) => {
+    console.log(res);
+  };
+
+  return (
+    <FacebookLogin
+      fbAppId={'APP_ID'}
+      onFailure={onFailure}
+      handleResponse={handleResponse}
+      render={(renderProps) => <button onClick={renderProps.onClick}>This is my custom FB button</button>}
+    />
+  );
+}
+
+export default App;
+```
+
+## FacebookLogin Props
+
+|     params     |  value   |                  default value                  |
+| :------------: | :------: | :---------------------------------------------: |
+|    fbAppId     |  string  |                    REQUIRED                     |
+| handleResponse | function |                    REQUIRED                     |
+|   onFailure    | function | optional function to separatere the failed init |
+|     render     | function |                   Htnl button                   |
