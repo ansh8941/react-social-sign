@@ -1,6 +1,6 @@
 {
   "name": "react-social-sign",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Social Login",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

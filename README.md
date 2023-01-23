@@ -35,7 +35,7 @@ export default App;
 | buttonTheme  |  object  | { theme: 'outline'; text: 'signin_with'; shape: 'rectangular'; size: 'large'; width: '40px' } |                                                               handle Button theme                                                               |
 | promptEnable | boolean  |                                             false                                             |                                                           Google One tap popup enable                                                           |
 
-## callback callback
+## callback
 
 callback returns a GoogleUser object which provides access
 to all of the GoogleUser methods listed here: https://developers.google.com/identity/gsi/web/reference/js-reference#CredentialResponse .
@@ -111,6 +111,12 @@ import React, { useState } from 'react';
 import { LinkedIn } from 'react-social-sign';
 
 function App() {
+  const callback = (res) => {
+    console.log(res);
+  };
+  const onFailure = (res) => {
+    console.log(res);
+  };
   return (
     <LinkedIn
       clientId={CLIENT_ID}
@@ -121,13 +127,7 @@ function App() {
       onError={(error) => {
         console.log(error);
       }}
-    >
-      {({ linkedInLogin }) => (
-        <button onClick={linkedInLogin} style={{ maxWidth: '180px', cursor: 'pointer' }}>
-          Sign in with Linked In
-        </button>
-      )}
-    </LinkedIn>
+    />
   );
 }
 export default App;
@@ -167,7 +167,7 @@ export default function LinkedInPage() {
 ```js
 import React, { useState } from 'react';
 
-import { LinkedIn } from 'react-social-sign';
+import { AppleLogin } from 'react-social-sign';
 
 function App() {
   return <AppleLogin clientId='com.react.apple.login' redirectURI='https://redirectUrl.com' />;
