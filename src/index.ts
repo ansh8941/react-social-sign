@@ -1,5 +1,6 @@
 import FacebookLogin from './components/facebook';
 import GoogleLogin from './components/google';
-import { LinkedIn, LinkedInCallback, useLinkedIn } from './components/linkdin';
+import AppleLogin from './components/apple/AppleLogin';
+import { LinkedInLogin, LinkedInCallback } from './components/linkdin';
 
-export { FacebookLogin, GoogleLogin, LinkedIn, LinkedInCallback, useLinkedIn };
+export { AppleLogin, FacebookLogin, GoogleLogin, LinkedInLogin, LinkedInCallback };

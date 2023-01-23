@@ -1,28 +1,23 @@
-import React, { useState, useEffect, FC, ReactElement } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { loadExternalScript } from '../../utils/functions';
 
-type theme = { theme: 'outline'; text: 'signin_with'; shape: 'rectangular'; size: 'large'; width: '40px' };
-type GoogleProps = {
-  handleResponse: (data: string) => void;
-  clientId: string;
-  buttonTheme?: theme;
-  promptEnable?: false;
-};
-const GoogleLogin: FC<GoogleProps> = ({ handleResponse, clientId, buttonTheme, promptEnable }): ReactElement => {
-  const [scriptLoaded, setScriptLoaded] = useState(false);
-  function handleCredentialResponse(response: { credential: string }) {
-    handleResponse(response.credential);
-  }
+import { GoogleProps } from './types';
+
+const GoogleLogin = (props: GoogleProps) => {
+  const { callback, clientId, buttonTheme, promptEnable } = props;
+
+  const [state, setState] = useState({ loaded: false, error: false });
+
   useEffect(() => {
-    if (scriptLoaded) return undefined;
-    const initializeGoogle = () => {
-      if (!window.google || scriptLoaded) return;
-      setScriptLoaded(true);
+    if (state.loaded) return undefined;
+    const onLoad = () => {
+      if (!window.google || state.loaded) return;
+      setState({ loaded: true, error: false });
 
       window.google.accounts.id.initialize({
         client_id: clientId,
-        callback: handleCredentialResponse,
+        callback,
       });
 
       window.google.accounts.id.renderButton(
@@ -32,13 +27,13 @@ const GoogleLogin: FC<GoogleProps> = ({ handleResponse, clientId, buttonTheme, p
       if (promptEnable) window.google.accounts.id.prompt(); // also display the One Tap dialog
     };
 
-    loadExternalScript('google-client-script', 'https://accounts.google.com/gsi/client', initializeGoogle);
+    loadExternalScript('google-client-script', 'https://accounts.google.com/gsi/client', onLoad);
 
     return () => {
       window.google?.accounts.id.cancel();
       document.getElementById('google-client-script')?.remove();
     };
-  }, [scriptLoaded]);
+  }, [state]);
 
   return <div id='googleLoginBtn' />;
 };

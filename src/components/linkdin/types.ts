@@ -8,14 +8,6 @@ export interface useLinkedInType {
   closePopupMessage?: string;
 }
 
-interface linkedInLoginType {
-  linkedInLogin: () => void;
-}
-
-export interface LinkedInType extends useLinkedInType {
-  children: ({ linkedInLogin }: linkedInLoginType) => JSX.Element;
-}
-
-export interface StringArray {
-  [index: string]: string;
+export interface LinkedInProps extends useLinkedInType {
+  render?: (props: { onClick: (e?: any) => void; disabled?: boolean }) => JSX.Element;
 }

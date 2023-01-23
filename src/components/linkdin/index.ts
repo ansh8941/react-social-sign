@@ -1,3 +1,2 @@
-export * from './useLinkedIn';
-export * from './LinkedIn';
-export * from './LinkedInCallback';
+export { default as LinkedInLogin } from './LinkedInLogin';
+export { LinkedInCallback } from './LinkedInCallback';

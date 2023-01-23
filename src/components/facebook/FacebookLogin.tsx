@@ -1,99 +1,29 @@
-import React, { useState, useEffect, FC, ReactElement } from 'react';
+import React from 'react';
 
-import { loadExternalScript } from '../../utils/functions';
-
+import { FBProps } from './types';
 import styles from './style.module.css';
+import { useFacebook } from './useFacebook';
 
-type FBResponse = {
-  name: string;
-};
+const FacebookLogin = (props: FBProps) => {
+  const { callback, fbAppId, onFailure, render } = props;
 
-type FBStatus = {
-  status: string;
-};
+  const { fbLogin } = useFacebook({
+    callback,
+    fbAppId,
+    onFailure,
+  });
 
-type FBProps = {
-  handleResponse: (data: FBResponse | FBStatus) => void;
-  onFailure: (data: FBStatus) => void;
-  fbAppId: string;
-  render?: any;
-};
-
-const FacebookLogin: FC<FBProps> = ({ handleResponse, fbAppId, onFailure, render }): ReactElement => {
-  const [scriptLoaded, setScriptLoaded] = useState(false);
-
-  function initializeFacebook() {
-    setScriptLoaded(true);
+  if (typeof render === 'function') {
+    return render({ onClick: fbLogin });
   }
 
-  function loadFbLoginApi() {
-    window.fbAsyncInit = function () {
-      window.FB.init({
-        appId: fbAppId,
-        cookie: true, // enable cookies to allow the server to access
-        // the session
-        xfbml: true, // parse social plugins on this page
-        version: 'v2.5', // use version 2.1
-      });
-    };
-  }
-
-  useEffect(() => {
-    if (scriptLoaded) return undefined;
-    loadFbLoginApi();
-    loadExternalScript('facebook-client-script', `https://connect.facebook.net/en_US/sdk.js`, initializeFacebook);
-    return () => {
-      document.getElementById('facebook-client-script')?.remove();
-    };
-  }, [scriptLoaded]);
-
-  useEffect(() => {
-    if (scriptLoaded)
-      window.FB.getLoginStatus((response: { authResponse: any; status: string }) => {
-        console.log(response);
-      });
-  }, [scriptLoaded]);
-
-  function responseApi(authResponse: any) {
-    window.FB.api('/me', (me: FBResponse) => {
-      Object.assign(me, authResponse);
-      handleResponse(me);
-    });
-  }
-
-  function checkLoginState(response: { authResponse: any; status: string }) {
-    if (response.authResponse) {
-      responseApi(response.authResponse);
-    } else {
-      if (onFailure) {
-        onFailure({ status: response.status });
-      } else {
-        handleResponse({ status: response.status });
-      }
-    }
-  }
-
-  function handleOnClick() {
-    window.FB.getLoginStatus((response: { authResponse: any; status: string }) => {
-      if (response.status === 'connected') {
-        checkLoginState(response);
-      } else {
-        window.FB.login(checkLoginState, { scope: 'public_profile,email' });
-      }
-    });
-  }
-
-  if (render) {
-    return render({ onClick: handleOnClick });
-  } else {
-    return (
-      <>
-        <button className={`${styles.loginBtn} ${styles.loginBtnFacebook}`} onClick={handleOnClick}>
-          <span>Sign in With Facebook</span>
-        </button>
-      </>
-    );
-  }
+  return (
+    <>
+      <button id='facebook-login-button' className={`${styles.loginBtn} ${styles.loginBtnFacebook}`} onClick={fbLogin}>
+        <span>Sign in With Facebook</span>
+      </button>
+    </>
+  );
 };
 
 export default FacebookLogin;

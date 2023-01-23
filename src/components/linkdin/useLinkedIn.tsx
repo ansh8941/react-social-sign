@@ -1,23 +1,8 @@
 import { useCallback, useEffect, useRef } from 'react';
 
+import { generateQueryString, getPopupPositionProperties, generateRandomString } from '../../utils/functions';
+
 import { useLinkedInType } from './types';
-import { LINKEDIN_OAUTH2_STATE } from './utils';
-
-const getPopupPositionProperties = ({ width = 600, height = 600 }) => {
-  const left = screen.width / 2 - width / 2;
-  const top = screen.height / 2 - height / 2;
-  return `left=${left},top=${top},width=${width},height=${height}`;
-};
-
-const generateRandomString = (length = 20) => {
-  let result = '';
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  const charactersLength = characters.length;
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return result;
-};
 
 export function useLinkedIn({
   redirectUri,
@@ -33,7 +18,7 @@ export function useLinkedIn({
 
   const receiveMessage = useCallback(
     (event: MessageEvent) => {
-      const savedState = localStorage.getItem(LINKEDIN_OAUTH2_STATE);
+      const savedState = localStorage.getItem('linkedin_oauth2_state');
       if (event.origin === window.location.origin) {
         if (event.data.errorMessage && event.data.from === 'Linked In') {
           // Prevent CSRF attack by testing state
@@ -81,10 +66,15 @@ export function useLinkedIn({
   }, [receiveMessage]);
 
   const getUrl = () => {
-    const scopeParam = `&scope=${encodeURI(scope)}`;
     const generatedState = state || generateRandomString();
-    localStorage.setItem(LINKEDIN_OAUTH2_STATE, generatedState);
-    const linkedInAuthLink = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}${scopeParam}&state=${generatedState}`;
+    localStorage.setItem('linkedin_oauth2_state', generatedState);
+    const linkedInAuthLink = `https://www.linkedin.com/oauth/v2/authorization?${generateQueryString({
+      response_type: 'code',
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      scope: encodeURI(scope),
+      state: generatedState,
+    })}`;
     return linkedInAuthLink;
   };
 

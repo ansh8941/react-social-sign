@@ -4,6 +4,7 @@ declare global {
     fbAsyncInit: any;
     FB: any;
   }
+  const AppleID: any;
 }
 
 export {};
